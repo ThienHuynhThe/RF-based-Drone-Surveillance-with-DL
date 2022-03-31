@@ -32,25 +32,13 @@ options = trainingOptions('sgdm', ...
     'VerboseFrequency',ValFre,...
     'Plots','training-progress',...
     'ExecutionEnvironment','multi-gpu');    % set up the GPU environment for training
-% start the training process
 
 % load the network 
 RF_UAVNet
+% start the training process
 trainednet = trainNetwork(imdsTrain,lgraph,options);
 
 % measure the accuracy on the testing set.
-tic 
 YPred = classify(trainednet,imdsTest,'MiniBatchSize',512,'ExecutionEnvironment','gpu');
-toc
 YTest = imdsTest.Labels;
 accuracy = sum(YPred == YTest)/numel(YTest)
-
-% store the output information
-trainednetInfo = {};
-trainednetInfo{1,1} = trainednet;
-trainednetInfo{1,2} = YTest;
-trainednetInfo{1,3} = YPred;
-trainednetInfo{1,4} = accuracy;
-trainednetInfo{1,5} = imdsTrain;
-trainednetInfo{1,6} = imdsTest;
-save('trainednet.mat','trainednetInfo')
